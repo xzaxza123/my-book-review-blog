@@ -1,0 +1,284 @@
+/* src/client/mdx-styles.css */
+/* MDX 内容基础样式 */
+.mdx-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1.35rem 0.675rem;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* 标题样式 */
+.mdx-title {
+  font-size: 1.692rem;
+  font-weight: 700;
+  margin-bottom: 0.675rem;
+  color: #222;
+}
+
+.mdx-heading {
+  margin-top: 1.35rem;
+  margin-bottom: 0.675rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.mdx-h1 {
+  font-size: 1.35rem;
+  margin-top: 2.025rem;
+}
+
+.mdx-h2 {
+  font-size: 1.179rem;
+  margin-top: 1.692rem;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 0.342rem;
+}
+
+.mdx-h3 {
+  font-size: 1.017rem;
+  margin-top: 1.35rem;
+}
+
+/* 元信息 */
+.mdx-meta {
+  margin-bottom: 1.35rem;
+  color: #666;
+  font-size: 0.612rem;
+}
+
+.mdx-date {
+  color: #888;
+}
+
+/* 段落 */
+.mdx-paragraph {
+  margin-bottom: 1.017rem;
+  line-height: 1.8;
+}
+
+/* 图片样式 */
+.image-container {
+  margin: 1.35rem 0;
+  text-align: center;
+}
+
+.mdx-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.mdx-image:hover {
+  transform: scale(1.01);
+}
+
+.image-caption {
+  font-size: 0.612rem;
+  color: #666;
+  font-style: italic;
+  text-align: center;
+}
+
+/* 代码块样式 */
+.mdx-inline-code,
+code.mdx-inline-code,
+code.inline-code {
+  background: #f5f5f5;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+  color: #d63384;
+  display: inline;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+pre {
+  margin: 1.017rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 表格样式 */
+.table-container {
+  margin: 1.35rem 0;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.mdx-table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  margin: 0.9rem 0;
+  table-layout: auto;
+  word-break: break-word;
+}
+
+.table-header {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  padding: 0.504rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.table-cell {
+  border: 1px solid #dee2e6;
+  padding: 0.504rem;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.mdx-table tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.mdx-table tr:hover {
+  background-color: #e9ecef;
+}
+
+/* 引用块样式 */
+.mdx-blockquote {
+  border-left: 4px solid #3eaf7c;
+  margin: 1.017rem 0;
+  padding: 0.675rem 1.017rem;
+  background-color: #f8f9fa;
+  color: #555;
+  font-style: italic;
+}
+
+.mdx-blockquote p {
+  margin-bottom: 0.45rem;
+}
+
+/* 列表样式 */
+.mdx-list {
+  margin: 1.017rem 0;
+  padding-left: 1.35rem;
+}
+
+.mdx-ordered-list {
+  list-style-type: decimal;
+}
+
+.mdx-list-item {
+  margin-bottom: 0.342rem;
+  line-height: 1.6;
+}
+
+/* 链接样式 */
+.internal-link {
+  color: #3eaf7c;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.internal-link:hover {
+  border-bottom-color: #3eaf7c;
+}
+
+.external-link {
+  color: #0366d6;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.225rem;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.external-link:hover {
+  border-bottom-color: #0366d6;
+}
+
+.external-icon {
+  margin-left: 0.225rem;
+  fill: currentColor;
+}
+
+/* 分割线 */
+.mdx-hr {
+  margin: 1.35rem 0;
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #e0e0e0, transparent);
+}
+
+/* 强调文本 */
+.mdx-strong {
+  font-weight: 700;
+  color: #222;
+}
+
+.mdx-emphasis {
+  font-style: italic;
+}
+
+/* 错误样式 */
+.mdx-error {
+  padding: 1.35rem;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  margin: 1.35rem 0;
+}
+
+.error-details {
+  white-space: pre-wrap;
+  background: #fff;
+  padding: 0.675rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.612rem;
+  color: #c00;
+}
+
+/* 数学公式 */
+.katex-display {
+  margin: 1.017rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .mdx-content {
+    padding: 0.675rem 0.342rem;
+  }
+
+  .mdx-title {
+    font-size: 1.35rem;
+  }
+
+  .mdx-h1 {
+    font-size: 1.179rem;
+  }
+
+  .mdx-h2 {
+    font-size: 1.017rem;
+  }
+
+  .mdx-h3 {
+    font-size: 0.846rem;
+  }
+
+  .table-container {
+    margin: 0.675rem -0.342rem;
+  }
+
+  .mdx-table {
+    font-size: 0.612rem;
+  }
+
+  .table-header,
+  .table-cell {
+    padding: 0.342rem;
+  }
+}

@@ -1,0 +1,307 @@
+@keyframes theme-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.HomePage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  color: #222;
+
+  &__background {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: #f2eee7;
+    transition: background-color 220ms ease;
+
+    &.is-light {
+      background: #f2eee7;
+    }
+
+    &.is-dark {
+      background: #0d1220;
+    }
+  }
+
+  &__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 400ms ease, transform 400ms ease;
+    opacity: 0;
+    transform: scale(1.02); // 轻微缩放，切换时更柔和
+
+    &.is-visible {
+      opacity: 1;
+      transform: scale(1);
+      animation: theme-fade-in 400ms ease;
+    }
+
+    &.is-hidden {
+      opacity: 0;
+    }
+  }
+
+  &__content {
+    position: relative;
+    z-index: 2;
+  }
+
+  /*
+    交互画布层：
+    - 背景继续负责“铺满屏幕”
+    - design-canvas 负责“几何坐标”，保持固定宽高比，
+      这样在任何窗口比例下，书本和按钮相对位置都稳定。
+  */
+  &__design-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none; // 默认不拦截事件，只让交互元素可点
+  }
+
+  &__design-canvas {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    transition: opacity 160ms ease;
+
+    &.is-loading {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    &.is-ready {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  // 书本
+  &__book-wrapper {
+    position: absolute;
+    left: 50%;
+    top: 67%;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+
+    border: none;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+
+    display: block;
+    transform-origin: center center;
+    transition: transform 220ms ease, filter 220ms ease;
+
+    &:hover {
+      transform: translate(-50%, -50%) scale(1.05);
+      filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.45));
+    }
+
+    &:active {
+      transform: translate(-50%, -50%) scale(1.02);
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
+    }
+
+    &--desktop {
+      width: calc(var(--home-ui-scale, var(--home-bg-scale, 1)) * 1900px);
+    }
+
+    &--mobile {
+      width: calc(var(--home-ui-scale, var(--home-bg-scale, 1)) * 620px);
+
+      &:hover {
+        transform: translate(-50%, -50%) scale(1.035);
+      }
+    }
+  }
+
+  &__book-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  // 台灯按钮
+  &__lamp-wrapper {
+    position: absolute;
+    left: 28%;
+    top: 35.5%;
+    transform: translate(-50%, -50%);
+    width: calc(var(--home-ui-scale, var(--home-bg-scale, 1)) * 110px);
+    pointer-events: auto;
+
+    border: none;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+
+    display: block;
+    transform-origin: center center;
+    transition: transform 220ms ease, filter 220ms ease;
+
+    &:hover {
+      transform: translate(-50%, -50%) scale(1.18);
+      filter: drop-shadow(0 0 10px rgba(255, 230, 180, 0.8));
+    }
+
+    &:active {
+      transform: translate(-50%, -50%) scale(1.1);
+      filter: drop-shadow(0 0 6px rgba(255, 230, 180, 0.7));
+    }
+  }
+
+  &__lamp-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  // 提示气泡
+  &__hint {
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    transform: translate(-50%, -10px);
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.72);
+    color: #fff;
+    font-size: 13px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    animation: hint-fade-in 500ms ease forwards 200ms;
+
+    // 下方小箭头，指向对应交互控件
+    &::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 100%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 6px 6px 0 6px;
+      border-color: rgba(0, 0, 0, 0.72) transparent transparent transparent;
+    }
+  }
+
+  &__hint--lamp {
+    transform: translate(-50%, -12px);
+  }
+
+  &__hint--mobile-book {
+    transform: translate(-50%, -12px);
+  }
+
+  &__hint--theme {
+    left: auto;
+    right: 0;
+    bottom: auto;
+    top: 100%;
+    transform: translate(0, 8px);
+
+    &::after {
+      top: -6px;
+      right: 22px;
+      left: auto;
+      transform: none;
+      border-width: 0 6px 6px 6px;
+      border-color: transparent transparent rgba(0, 0, 0, 0.72) transparent;
+    }
+  }
+
+  &__theme-switch {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + 16px);
+    right: calc(env(safe-area-inset-right, 0px) + 16px);
+    z-index: 4;
+    pointer-events: auto;
+
+    min-width: 96px;
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 19, 36, 0.45);
+    color: #fff;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+    cursor: pointer;
+    transition: transform 180ms ease, box-shadow 180ms ease, background 220ms ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 9px 24px rgba(0, 0, 0, 0.33);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &.is-light {
+      background: rgba(255, 255, 255, 0.55);
+      color: #2e2a27;
+      border-color: rgba(255, 255, 255, 0.65);
+    }
+
+    &.is-dark {
+      background: rgba(8, 12, 28, 0.58);
+      color: #f4f7ff;
+      border-color: rgba(151, 186, 255, 0.35);
+    }
+  }
+
+  &__theme-switch-text {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+
+  &__route-content {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+
+    > * {
+      pointer-events: auto;
+    }
+  }
+
+}
+
+@keyframes hint-fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -8px) scale(1);
+  }
+}

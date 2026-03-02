@@ -1,0 +1,113 @@
+/* 目录页（TOC）样式模块
+ * - 插入到书本内容中的多页文章目录
+ * - 与普通内容页保持统一的排版、字体与留白
+ */
+
+.book-toc-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  color: #222;
+}
+
+.book-toc-page__inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0; /* 允许在 flex 容器中收缩 */
+  max-height: 100%; /* 确保不会超出父容器 */
+}
+
+.book-toc-page__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 40px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.book-toc-page__title {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.book-toc-page__page-index {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 12px;
+}
+
+.book-toc-page__list {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px; /* 相比原先 13px 至少放大 ~10% */
+}
+
+.book-toc-page__item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px dotted rgba(0, 0, 0, 0.08);
+  padding: 3px 2px 4px 3px;
+}
+
+.book-toc-page__item--clickable {
+  cursor: pointer;
+  border-radius: 6px;
+  padding-left: 6px;
+  padding-right: 6px;
+  transition:
+    background-color 0.18s ease,
+    transform 0.12s ease,
+    box-shadow 0.18s ease,
+    color 0.18s ease;
+}
+
+.book-toc-page__item--clickable:hover {
+  background-color: rgba(36, 99, 235, 0.06);
+  transform: translateY(-0.5px);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.22);
+}
+
+.book-toc-page__item--clickable:hover .book-toc-page__item-title {
+  color: #1d4ed8;
+}
+
+.book-toc-page__item--clickable:hover .book-toc-page__item-page {
+  color: #1d4ed8;
+}
+
+.book-toc-page__item-index {
+  min-width: 28px;
+  color: #666;
+}
+
+.book-toc-page__item-title {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.book-toc-page__item-page {
+  min-width: 32px;
+  text-align: right;
+  color: #444;
+  font-variant-numeric: tabular-nums;
+}
+
+

@@ -1,0 +1,130 @@
+---
+title: 架构与目录结构
+date: 2026-03-02
+author: Book Blog Maintainer
+tags:
+  - architecture
+  - structure
+  - pagination
+---
+
+## 总体设计思路
+
+项目围绕三个核心能力来组织代码结构。
+
+- 内容来源于 MDX 文档
+- 分页算法根据视口尺寸将 DOM 拆分成页面
+- 书本视图负责以翻页的形式展示页面
+
+这三部分之间通过清晰的边界连接在一起：文档只关心内容，分页模块只关心 DOM 和尺寸，视图层只关心如何把已有页面渲染成书本。
+
+## 顶层目录结构
+
+下面的代码块展示了项目的主要目录（使用横杠表示层级关系）。
+
+```text
+- my-book-review-blog
+  - src
+    - core
+    - utils
+    - hooks
+    - view
+    - styles
+  - docs
+  - public
+```
+
+src 目录承载所有运行时代码，docs 目录承载 MDX 文档和测试文档，public 用于静态资源。
+
+## 核心模块划分
+
+### core：书本和分页核心
+
+```text
+- src/core
+  - book
+    - spreadMap.ts
+  - pagination
+    - articlePaginator.ts
+  - mdx
+    - vite-plugin
+      - reactPress.ts
+      - vite-plugin-mdx-page-map.ts
+```
+
+- book 子目录负责逻辑页和物理书页的映射
+- pagination 子目录负责把 DOM 内容按页拆分和缓存
+- mdx 子目录中包含扫描 docs 目录并生成路由的 Vite 插件
+
+这些模块不直接依赖具体的 React 组件，而是通过函数和工具与上层解耦。
+
+### utils：通用工具和分页算法
+
+```text
+- src/utils
+  - paginate.ts
+  - deviceDetector.ts
+  - turn.js
+```
+
+paginate.ts 实现了核心 DOM 分页算法。它会接收渲染好的文章容器、目标页面宽高，然后返回一组页面元素。
+
+deviceDetector.ts 用于检测设备、视口尺寸和是否是移动端。turn.js 是本地化的翻页库实现，为书本翻页效果提供底层支持。
+
+### view：页面和场景
+
+```text
+- src/view
+  - HomePage
+  - BookPage
+```
+
+HomePage 负责首页展示和入口引导。BookPage 则包含书本容器、页码、目录和前言等内容，是用户实际阅读时停留时间最长的页面。
+
+视图层会调用分页模块和路由信息来决定要渲染哪些文档、如何组织成一本书。
+
+### hooks：自定义 Hook
+
+```text
+- src/hooks
+  - useArticlePages
+  - useResponsiveBookLayout
+```
+
+useArticlePages 负责基于当前文章和页面尺寸，计算并缓存对应的分页结果。内部会调度 paginate 模块，并在尺寸变化时触发重新分页。
+
+useResponsiveBookLayout 负责根据屏幕宽度和方向，在单页模式和双页模式之间切换，同时决定书本在页面中的摆放方式。
+
+### styles：样式与主题
+
+```text
+- src/styles
+  - mdx-styles.css
+  - index.scss
+```
+
+mdx-styles.css 集中定义了 MDX 文档渲染后的样式，包括段落、标题、表格、代码块、引用和数学公式等。index.scss 则负责页面布局、书本外观和主题相关样式。
+
+## 数据与渲染流程
+
+从文档文件到书本页面，整体流程可以概括为几个步骤。
+
+1. Vite 插件扫描 docs 目录并生成路由映射
+2. 路由层根据当前路径确定需要加载的 MDX 文档
+3. MDX 文档被渲染到隐藏容器中
+4. paginate 模块根据页面宽高把 DOM 切分成多个页面
+5. BookPage 使用 turn.js 将页面渲染为可翻页的书本
+
+这一链路保持了方向单一，页面不会反向修改分页结果，分页模块也不感知路由和交互逻辑。
+
+## 架构取舍
+
+架构上有几个刻意的取舍。
+
+- 使用 DOM 级分页而不是预编译分页，可以更好适配不同屏幕尺寸
+- 将分页逻辑放在独立的工具文件，方便单独测试和演进
+- 通过 MDX 文档来驱动内容，以统一的管道支持普通文档和测试文档
+
+如果后续需要扩展功能，例如增加多语言支持或自定义布局，可以在保持这三个核心能力不变的前提下，围绕 core、utils、view 三层分别迭代。 
+
+

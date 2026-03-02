@@ -1,0 +1,347 @@
+.BookPageOverlay {
+  /* 作为一个独立的全屏弹层，避免被 HomePage 里的元素干扰 */
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  /* 保持 overflow: hidden 以裁剪背景，但确保内部容器有足够空间 */
+  overflow: hidden;
+  perspective: 2200px;
+
+  /* 让书本在默认状态下真正水平 / 垂直居中 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.BookPageOverlay__close-button {
+  position: absolute;
+  top: 20px;
+  right: 28px;
+  z-index: 60;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  background: rgba(12, 12, 12, 0.74);
+  color: #fff;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.BookPageOverlay__close-button:hover {
+  background: rgba(28, 28, 28, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+}
+
+.BookPageOverlay__close-button:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+}
+
+.book-page {
+  position: relative; /* 作为书本自身的定位容器，侧边书签相对于它布置 */
+  transition: transform 1s;
+  /* 确保容器有足够的空间容纳缩放后的元素和交互区域 */
+  /* 不设置 overflow，让所有角落都能正常交互 */
+  overflow: visible;
+}
+
+#canvas {
+  margin: 0 auto;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 220ms ease;
+  /* 确保 canvas 容器能够容纳缩放后的元素，不会被裁剪 */
+  /* 使用 min-width/min-height 而不是固定尺寸，让容器适应内容 */
+  min-width: fit-content;
+  min-height: fit-content;
+  /* 确保容器有足够的空间容纳缩放后的元素和交互区域 */
+  /* turn.js 的 cornerSize 默认是 100px，缩放后需要更多空间 */
+  /* 添加 padding 确保所有角落的交互区域（包括缩放后的）都不被裁剪 */
+  padding: 150px;
+  box-sizing: content-box;
+  /* 确保容器本身不会裁剪内容 */
+  overflow: visible;
+}
+
+.BookPageOverlay.is-double #canvas {
+  transform-origin: 50% 78%;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.36));
+  transition:
+    transform 1200ms cubic-bezier(0.16, 0.9, 0.24, 1),
+    opacity 800ms ease,
+    filter 1200ms ease;
+  will-change: transform, opacity, filter;
+}
+
+.BookPageOverlay--booting #canvas {
+  opacity: 0;
+  visibility: hidden;
+  /*
+    booting：模拟首页桌面上的那本书（更小、更靠下、离视角更远）
+    - 更靠下（约 30vh），接近首页书本中心的高度
+    - 明显缩小（scale 0.55 左右），尺寸接近首页封面
+    - 向远处（translateZ -360px），形成“远处的书”的感觉
+    - X 轴角度更大，像是躺在桌面上
+  */
+  transform: translate3d(0, 30vh, -360px) scale(0.55) rotateX(76deg) rotateZ(-4deg);
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.22));
+}
+
+.BookPageOverlay--entering #canvas {
+  opacity: 1;
+  visibility: visible;
+  /*
+    entering：从桌面小书本 → 向镜头靠近并放大 → 即将平铺浮空
+    - Y 从 30vh 抬到 6vh
+    - Z 从 -360px 拉近到 -40px（明显的“由远到近”）
+    - scale 从 0.55 提升到 0.96，尺寸已经明显大于首页封面
+    - X 轴角度从 76deg 收到约 26deg，仍保留一点桌面透视感
+  */
+  /* 这里恢复原来的 3D 动画路径：因为 booting/entering 阶段我们已经禁用了 .sj-book 的 pointer-events，
+     所以在这段时间内 turn.js 不会响应拖拽/点击，不会产生交互冲突。*/
+  transform: translate3d(0, 6vh, -40px) scale(0.96) rotateX(26deg) rotateZ(-1.5deg);
+  filter: drop-shadow(0 30px 52px rgba(0, 0, 0, 0.5));
+}
+
+.BookPageOverlay--idle #canvas {
+  opacity: 1;
+  visibility: visible;
+  /*
+    idle：悬停在空中、几乎正对视角的平放状态，比首页书本更“近、更大”
+  */
+  /* idle 阶段：完全去掉会引起模糊和坐标冲突的变换（scale / translateZ / rotateX），
+     只保留几何无关的阴影，让画面依然有“浮空感”，但 turn.js 能得到稳定的宽高和坐标。*/
+  transform: none;
+  filter: drop-shadow(0 20px 36px rgba(0, 0, 0, 0.38));
+}
+
+.BookPageOverlay--leaving #canvas {
+  opacity: 0;
+  visibility: visible;
+  /*
+    leaving：沿相反路径落回“桌面”并离视角远去
+  */
+  /* 这里让退出动画基本回到 booting 时的“桌面小书本”姿态，形成进入/退出的对称感：
+     - 掉回到 30vh，靠近首页书本中心高度
+     - Z 推远到 -360px，并缩小到 0.55，像是缩回远处桌面
+     - X 轴角度恢复到更“躺平”的 76deg，保留明显的桌面透视 */
+  transform: translate3d(0, 30vh, -360px) scale(0.55) rotateX(76deg) rotateZ(-4deg);
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.22));
+}
+
+.BookPageOverlay--leaving .sj-book {
+  pointer-events: none;
+}
+
+/* 动画期间禁用翻页交互：避免用户在 3D 透视/缩放阶段操作 turn.js */
+.BookPageOverlay--booting .sj-book,
+.BookPageOverlay--entering .sj-book {
+  pointer-events: none;
+}
+
+/* 缩放包装器：确保缩放后的元素能够正确接收点击事件 */
+.sj-book-scale-wrapper {
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+/* idle 状态下确保交互正常 */
+.BookPageOverlay--idle .sj-book {
+  pointer-events: auto;
+}
+
+.sj-book.animated {
+  transition: margin-left 0.2s ease-in-out;
+  will-change: margin-left;
+  pointer-events: auto;
+}
+
+.sj-book .shadow {
+  transition: box-shadow 0.5s;
+
+  -webkit-box-shadow: 0 0 10px #999;
+  -moz-box-shadow: 0 0 10px #999;
+  -ms-box-shadow: 0 0 10px #999;
+  -o-box-shadow: 0 0 10px #999;
+  box-shadow: 0 0 10px #999;
+}
+
+.sj-book .page {
+  -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  -ms-box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  -o-box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.sj-book .p1,
+.sj-book .p2 {
+  background-color: white;
+  background-image: url(../../assets/img/FrontCover-tuya.webp) !important;
+  background-size: cover, auto !important;
+  background-repeat: no-repeat, no-repeat !important;
+}
+
+.sj-book .BackCoverTitlePage-1,
+.sj-book .BackCoverTitlePage-2 {
+  background-color: white;
+  background-image: url(../../assets/img/BackCover-tuya.webp) !important;
+  background-size: cover, auto !important;
+  background-repeat: no-repeat, no-repeat !important;
+}
+
+.sj-book .p1 {
+  background-position: 0 0;
+}
+
+.sj-book .p2 {
+  background-position: -575px 0 !important;
+}
+
+.sj-book .BackCoverTitlePage-1 {
+  background-position: -575px 0 !important;
+}
+
+.sj-book .BackCoverTitlePage-2 {
+  background-position: 0 0;
+}
+
+.sj-book .depth {
+  background-image: url(../../assets/img/pages-depth.png) !important;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: absolute;
+  top: 7px;
+  width: 20px;
+  height: 710px;
+}
+
+.sj-book .front-side .depth {
+  left: 7px;
+  background-position: left 0;
+}
+
+.sj-book .back-side .depth {
+  right: 7px;
+  background-position: right 0;
+}
+
+.sj-book .hard {
+  width: 480px;
+  height: 720px;
+  background-color: white;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  -ms-box-shadow: none;
+  box-shadow: none;
+}
+
+.sj-book .own-size {
+  box-sizing: border-box !important;
+  width: 552px !important;
+  height: 698.4px !important;
+  background-color:white;
+}
+
+/* 统一的书页内层容器：承载真实内容与底部页脚，避免与 turn.js 外层容器样式/事件冲突 */
+.book-page-inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.book-page-inner__content {
+  flex: 1;
+  width: 100%;
+  min-height: 0; /* 允许 flex 子元素收缩 */
+  overflow: hidden;
+  /* 底部留出更多空间给页脚，让内容不要"贴着"容器底部 */
+  padding: 20px 26px 18px;
+  box-sizing: border-box;
+}
+
+/* 当内容容器包含目录页或前言页时，移除 padding，让它们自己管理 */
+.book-page-inner__content--no-padding {
+  padding: 0 !important;
+}
+
+.book-page-footer {
+  position: relative;
+  flex-shrink: 0; /* 防止在 flex 布局中被压缩 */
+  /* 增加垂直内边距，让页脚整体从容器底部"抬高"一些 */
+  padding: 10px 26px 28px 16px;
+  font-size: 13px;
+  color: #5c5656;
+  /* 稍微加一点毛玻璃白底，提高可读性，又不会太突兀 */
+  background: rgba(255, 255, 255, 0);
+  box-sizing: border-box;
+}
+
+.book-page-footer__title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  max-width: 72%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.book-page-footer__page-number {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+}
+
+/* 左页（even）：页码靠左，标题居中 */
+.sj-book .even .book-page-footer__page-number {
+  left: 26px;
+}
+
+/* 右页（odd）：页码靠右，标题居中 */
+.sj-book .odd .book-page-footer__page-number {
+  right: 26px;
+}
+
+/* 目录页和前言页的详细样式已拆分至：
+ * - ./toc/index.scss
+ * - ./preface/index.scss
+ * 本文件只保留与整本书布局/动画相关的基础样式。
+ */
+
+.sj-book .page-wrapper {
+  -webkit-perspective: 2000px;
+  -moz-perspective: 2000px;
+  -ms-perspective: 2000px;
+  perspective: 2000px;
+}
+
+.sj-book .even{
+	background:-webkit-gradient(linear, left top, right top, color-stop(0.95, #fff), color-stop(1, #dadada));
+	background-image:-webkit-linear-gradient(left, #fff 95%, #dadada 100%);
+	background-image:-moz-linear-gradient(left, #fff 95%, #dadada 100%);
+	background-image:-ms-linear-gradient(left, #fff 95%, #dadada 100%);
+	background-image:-o-linear-gradient(left, #fff 95%, #dadada 100%);
+	background-image:linear-gradient(left, #fff 95%, #dadada 100%);
+}
+
+.sj-book .odd{
+	background:-webkit-gradient(linear, right top, left top, color-stop(0.95, #fff), color-stop(1, #cacaca));
+	background-image:-webkit-linear-gradient(right, #fff 95%, #cacaca 100%);
+	background-image:-moz-linear-gradient(right, #fff 95%, #cacaca 100%);
+	background-image:-ms-linear-gradient(right, #fff 95%, #cacaca 100%);
+	background-image:-o-linear-gradient(right, #fff 95%, #cacaca 100%);
+	background-image:linear-gradient(right, #fff 95%, #cacaca 100%);
+}

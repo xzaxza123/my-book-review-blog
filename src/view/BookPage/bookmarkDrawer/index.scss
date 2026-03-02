@@ -1,0 +1,320 @@
+/* 书签封面页（第3页和倒数第3页）：用于配合书签抽屉页的展开效果 */
+.bookmark-cover-page {
+  background-color: rgba(0, 0, 0, 0) !important;
+  background-image: none !important;
+}
+
+/* 书签抽屉页（第4页和倒数第4页）：承载书签抽屉内容本体 */
+.bookmark-drawer-page {
+  background-color: rgba(0, 0, 0, 0) !important;
+  background-image: none !important;
+  width: 100%;
+  height: 100%;
+
+  .bookmark-drawer-page-Left {
+    width: 100%;
+    height: 100%;
+    display: flex;
+
+    .bookmark-drawer-page-Left__Bookmark {
+      width: 20%;
+      height: 100%;
+      position: relative;
+
+      img {
+        width: 90%;
+        height: 20%;
+        position: absolute;
+        top: 10%;
+        right: 0;
+        transform: rotate(20deg);
+      }
+
+    }
+
+    .bookmark-drawer-page-Left__Drawer {
+      width: 50%;
+      height: 100%;
+      background-image:
+        url(../../../assets/img/PagesBookBg-Right-tuya.webp),
+        -webkit-linear-gradient(left, #fff 90%, #dadada 100%);
+      background-size: cover, auto;
+      background-repeat: no-repeat, no-repeat;
+      background-position: -30px 0;
+      padding: 20px 15px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+  }
+
+  .bookmark-drawer-page-Right {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: end;
+
+    .bookmark-drawer-page-Right__Bookmark {
+      width: 20%;
+      height: 100%;
+      position: relative;
+
+      img {
+        width: 90%;
+        height: 20%;
+        position: absolute;
+        top: 25%;
+        left: 0;
+        transform: rotate(-15deg);
+      }
+
+    }
+
+    .bookmark-drawer-page-Right__Drawer {
+      width: 50%;
+      height: 100%;
+      background-image:
+        url(../../../assets/img/PagesBookBg-Right-tuya.webp),
+        -webkit-linear-gradient(right, #fff 90%, #dadada 100%);
+      background-size: cover, auto;
+      background-repeat: no-repeat, no-repeat;
+      background-position: -30px 0;
+      padding: 20px 15px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+  }
+
+  // 目录列表样式
+  .bookmark-drawer-toc {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &__header {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 15px;
+      text-align: center;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #ddd;
+    }
+
+    &__list-container {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      // 隐藏滚动条但保持滚动功能
+      scrollbar-width: none; // Firefox
+      -ms-overflow-style: none; // IE/Edge
+      
+      &::-webkit-scrollbar {
+        display: none; // Chrome/Safari
+      }
+    }
+
+    &__list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+  }
+
+  // 目录项样式
+  .bookmark-drawer-toc-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 10px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    cursor: default;
+
+    &--clickable {
+      cursor: pointer;
+      
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      &:active {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    &__title {
+      flex: 1;
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &__page {
+      font-size: 12px;
+      color: #666;
+      min-width: 40px;
+      text-align: right;
+      margin-left: 10px;
+    }
+  }
+
+
+
+  // 搜索组件样式
+  .bookmark-drawer-search {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &__header {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 15px;
+      text-align: center;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #ddd;
+    }
+
+    &__input-container {
+      position: relative;
+      margin-bottom: 15px;
+    }
+
+    &__input {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.2s ease;
+      box-sizing: border-box;
+      background-color: #fff;
+
+      &:focus {
+        border-color: #4a90e2;
+      }
+
+      &::placeholder {
+        color: #999;
+      }
+    }
+
+    &__loading {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      color: #999;
+    }
+
+    &__results-container {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      // 隐藏滚动条但保持滚动功能
+      scrollbar-width: none; // Firefox
+      -ms-overflow-style: none; // IE/Edge
+      
+      &::-webkit-scrollbar {
+        display: none; // Chrome/Safari
+      }
+    }
+
+    &__results-count {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 10px;
+      padding: 0 5px;
+    }
+
+    &__results-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    &__no-results {
+      text-align: center;
+      color: #999;
+      font-size: 14px;
+      padding: 40px 20px;
+    }
+  }
+
+  // 搜索结果项样式
+  .bookmark-drawer-search-result-item {
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    cursor: default;
+
+    &--clickable {
+      cursor: pointer;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-color: rgba(74, 144, 226, 0.3);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      &:active {
+        background-color: rgba(255, 255, 255, 1);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    &__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    &__title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-right: 10px;
+    }
+
+    &__page {
+      font-size: 12px;
+      color: #4a90e2;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    &__snippet {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.6;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+  }
+
+}
+
+.bookmark-page-Zindex {
+  z-index: 999 !important;
+}

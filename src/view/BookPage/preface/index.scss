@@ -1,0 +1,69 @@
+/* 前言页样式模块
+ * - 位于目录之前的自定义内容页
+ * - 遵循统一的书页排版和页脚风格
+ */
+
+.preface-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  color: #222;
+}
+
+.preface-page__inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0; /* 允许在 flex 容器中收缩 */
+  max-height: 100%; /* 确保不会超出父容器 */
+}
+
+.preface-page__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 40px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.preface-page__title {
+  font-size: 24px;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  margin: 4px 0 10px;
+}
+
+.preface-page__subtitle {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 16px;
+}
+
+.preface-page__section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 14px;
+}
+
+.preface-page__paragraph {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #333;
+  margin: 0 0 10px;
+  text-indent: 2em;
+}
+
+.preface-page__paragraph--emphasis {
+  margin-top: 14px;
+  font-weight: 500;
+  color: #1d4ed8;
+}
+
+
